@@ -16,6 +16,13 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(-1, self.items[0].sell_in)
         self.assertEqual(0, self.items[0].quality)
 
+    def test_generic_item_50_quality(self):
+        self.items.append(Item("foo", 1, 52))
+        self.gilded_rose.update_quality()
+        self.assertEqual("foo", self.items[0].name)
+        self.assertEqual(0, self.items[0].sell_in)
+        self.assertEqual(51, self.items[0].quality)
+
     def test_aged_brie_quality_increase(self):
         self.items.append(Item("Aged Brie", 1, 1))
         self.gilded_rose.update_quality()
@@ -57,6 +64,20 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual("Backstage passes to a TAFKAL80ETC concert", self.items[0].name)
         self.assertEqual(-1, self.items[0].sell_in)
         self.assertEqual(0, self.items[0].quality)
+
+    def test_conjured_item(self):
+        self.items.append(Item("Conjured Mana Cake", 5, 10))
+        self.gilded_rose.update_quality()
+        self.assertEqual("Conjured Mana Cake", self.items[0].name)
+        self.assertEqual(4, self.items[0].sell_in)
+        self.assertEqual(8, self.items[0].quality)
+
+    def test_conjured_item_sell_in_0(self):
+        self.items.append(Item("Conjured Mana Cake", 0, 10))
+        self.gilded_rose.update_quality()
+        self.assertEqual("Conjured Mana Cake", self.items[0].name)
+        self.assertEqual(-1, self.items[0].sell_in)
+        self.assertEqual(6, self.items[0].quality)
 
 if __name__ == '__main__':
     unittest.main()
