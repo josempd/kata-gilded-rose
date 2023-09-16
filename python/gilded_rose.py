@@ -1,5 +1,43 @@
 from typing import List
 
+SELL_IN_RATE_CHANGE = 0
+SELL_IN_CONCERT_HIGH_THRESHOLD = 11
+SELL_IN_CONCERT_LOW_THRESHOLD = 6
+MIN_QUALITY = 0
+MAX_QUALITY = 50
+LEGENDARY_QUALITY = 80
+
+class UpdateSellIn:
+    @staticmethod
+    def update(sell_in):
+        return sell_in - 1
+
+class DecreaseQuality:
+    @staticmethod
+    def decrease(quality):
+        return max(quality - 1, 0)
+
+    @staticmethod
+    def decrease_by_two(quality):
+        return max(quality - 2, 0)
+
+    @staticmethod
+    def decrease_by_four(quality):
+        return max(quality - 4, 0)
+
+class IncreaseQuality:
+    @staticmethod
+    def increase(quality):
+        return min(quality + 1, MAX_QUALITY)
+
+    @staticmethod
+    def increase_by_two(quality):
+        return min(quality + 2, MAX_QUALITY)
+
+    @staticmethod
+    def increase_by_three(quality):
+        return min(quality + 3, MAX_QUALITY)
+
 class GildedRose(object):
 
     def __init__(self, items: List["Item"]):
@@ -38,62 +76,50 @@ class GenericItem(Item):
         super().__init__(name, sell_in, quality)
 
     def update(self):
-        self.sell_in = self.sell_in - 1
-        if self.sell_in < 0:
-            self.quality = self.quality -1
-            self.quality = self.quality -1
+        self.sell_in = UpdateSellIn.update(self.sell_in)
+        if self.sell_in < SELL_IN_RATE_CHANGE:
+            self.quality = DecreaseQuality.decrease_by_two(self.quality)
         else:
-            self.quality = self.quality - 1
-        if self.quality < 0:
-            self.quality = 0
+            self.quality = DecreaseQuality.decrease(self.quality)
 
 class ConjuredItem(Item):
     def __init__(self, name, sell_in, quality):
         super().__init__(name, sell_in, quality)
 
     def update(self):
-        self.sell_in = self.sell_in - 1
-        if self.sell_in < 0:
-            self.quality = self.quality -1
-            self.quality = self.quality -1
-            self.quality = self.quality -1
-            self.quality = self.quality -1    
+        self.sell_in = UpdateSellIn.update(self.sell_in)
+        if self.sell_in < SELL_IN_RATE_CHANGE:
+            self.quality = DecreaseQuality.decrease_by_four(self.quality)
         else:
-            self.quality = self.quality - 1
-            self.quality = self.quality - 1
-        if self.quality < 0:
-            self.quality = 0
+            self.quality = DecreaseQuality.decrease_by_two(self.quality)
     
 class LegendaryItem(Item):
     def __init__(self, name, sell_in, quality):
         super().__init__(name, sell_in, quality)
 
     def update(self):
-       self.quality = 80
+       self.quality = LEGENDARY_QUALITY
     
 class AgedItem(Item):
     def __init__(self, name, sell_in, quality):
         super().__init__(name, sell_in, quality)
 
     def update(self):
-        self.sell_in = self.sell_in - 1
-        if self.quality < 50:
-            self.quality = self.quality + 1
-            if self.sell_in < 0:
-                self.quality = self.quality + 1
+        self.sell_in = UpdateSellIn.update(self.sell_in)
+        self.quality = IncreaseQuality.increase(self.quality)
+        if self.sell_in < SELL_IN_RATE_CHANGE:
+            self.quality = IncreaseQuality.increase(self.quality)
     
 class ConcertItem(Item):
     def __init__(self, name, sell_in, quality):
         super().__init__(name, sell_in, quality)
 
     def update(self):
-        self.sell_in = self.sell_in - 1
-        self.quality = self.quality + 1
-        if self.sell_in < 11:
-            self.quality = self.quality + 1
-        if self.sell_in < 6:
-            self.quality = self.quality + 1
-        if self.sell_in < 0:
-            self.quality = 0
-        if self.quality > 49:
-            self.quality = 50
+        self.sell_in = UpdateSellIn.update(self.sell_in)
+        self.quality = IncreaseQuality.increase(self.quality)
+        if self.sell_in < SELL_IN_CONCERT_HIGH_THRESHOLD and self.sell_in >= SELL_IN_CONCERT_LOW_THRESHOLD:
+            self.quality = IncreaseQuality.increase(self.quality)
+        if self.sell_in < SELL_IN_CONCERT_LOW_THRESHOLD:
+            self.quality = IncreaseQuality.increase_by_two(self.quality)
+        if self.sell_in < SELL_IN_RATE_CHANGE:
+            self.quality = MIN_QUALITY
