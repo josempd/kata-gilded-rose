@@ -88,11 +88,12 @@ class ConcertItem(Item):
 
     def update(self):
         self.sell_in = self.sell_in - 1
-        if self.quality < 50:
+        self.quality = self.quality + 1
+        if self.sell_in < 11:
             self.quality = self.quality + 1
-            if self.sell_in < 11:
-                self.quality = self.quality + 1
-            if self.sell_in < 6:
-                self.quality = self.quality + 1
-            if self.sell_in < 0:
-                self.quality = 0
+        if self.sell_in < 6:
+            self.quality = self.quality + 1
+        if self.sell_in < 0:
+            self.quality = 0
+        if self.quality > 49:
+            self.quality = 50
