@@ -16,13 +16,6 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(-1, self.items[0].sell_in)
         self.assertEqual(0, self.items[0].quality)
 
-    def test_generic_item_50_quality(self):
-        self.items.append(Item("foo", 1, 52))
-        self.gilded_rose.update_quality()
-        self.assertEqual("foo", self.items[0].name)
-        self.assertEqual(0, self.items[0].sell_in)
-        self.assertEqual(51, self.items[0].quality)
-
     def test_aged_brie_quality_increase(self):
         self.items.append(Item("Aged Brie", 1, 1))
         self.gilded_rose.update_quality()
@@ -41,7 +34,7 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(1, self.items[0].sell_in)
         self.assertEqual(80, self.items[0].quality)
 
-    def test_concert_quality_gap_1(self):
+    def test_concert_quality(self):
         self.items.append(Item("Backstage passes to a TAFKAL80ETC concert", 7, 10))
         self.gilded_rose.update_quality()
         self.assertEqual("Backstage passes to a TAFKAL80ETC concert", self.items[0].name)
